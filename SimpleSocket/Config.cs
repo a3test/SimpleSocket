@@ -2,7 +2,7 @@
 
 namespace SimpleSocket
 {
-    public class Config
+    internal class Config
     {
         /// <summary>
         /// 数据长度指示位的长度

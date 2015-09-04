@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -111,13 +112,15 @@ namespace SimpleSocket
 
             StateObject state = new StateObject();
             state.WorkSocket = handler;
-            SocketError se;
-            handler.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, out se, ReceiveCallback,
-                state);
-            if (se != SocketError.Success)
+
+            try
             {
-                //TODO:: Do something
-                Console.WriteLine("Test message: AcceptCallback()");
+                handler.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+            }
+            catch (Exception)
+            {
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
             }
         }
 
@@ -166,14 +169,12 @@ namespace SimpleSocket
                 if (disposing)
                 {
                     //Release managed resources
-                    _acceptSignal.Dispose();
 
                 }
                 //Release unmanaged resources
                 if (_listener != null)
                 {
                     _listener.Close();
-                    _listener.Dispose();
                 }
 
                 _disposed = true;

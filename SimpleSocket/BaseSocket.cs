@@ -32,12 +32,19 @@ namespace SimpleSocket
             StateObject state = (StateObject) ar.AsyncState;
             Socket handler = state.WorkSocket;
 
-            SocketError se;
-            int recLen = handler.EndReceive(ar, out se);
-            if (se != SocketError.Success)
+            int recLen;
+            try
             {
-                //TODO:: Do somethine
-                Console.WriteLine("Test message: ReceiveCallback() 1");
+                recLen = handler.EndReceive(ar);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            if (recLen <= 0)
+            {
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
                 return;
             }
 
@@ -52,12 +59,14 @@ namespace SimpleSocket
 
                 state.Contents.Clear();
             }
-            handler.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, out se, ReceiveCallback,
-                state);
-            if (se != SocketError.Success)
+            try
             {
-                //TODO:: Do something
-                Console.WriteLine("Test message: ReceiveCallback() 2");
+                handler.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+            }
+            catch (Exception)
+            {
+                handler.Shutdown(SocketShutdown.Both);
+                handler.Close();
             }
         }
 

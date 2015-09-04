@@ -91,13 +91,14 @@ namespace SimpleSocket
             StateObject state = new StateObject();
             state.WorkSocket = _sender;
 
-            SocketError se;
-            _sender.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, out se, ReceiveCallback,
-                state);
-            if (se != SocketError.Success)
+            try
             {
-                //TODO:: Do something
-                Console.WriteLine("Test message: SocketClient Receive()");
+                _sender.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+            }
+            catch (Exception)
+            {
+                _sender.Shutdown(SocketShutdown.Both);
+                _sender.Close();
             }
         }
 
@@ -130,7 +131,6 @@ namespace SimpleSocket
                 {
                     _sender.Shutdown(SocketShutdown.Both);
                     _sender.Close();
-                    _sender.Dispose();
                 }
 
                 _disposed = true;

@@ -10,7 +10,7 @@ namespace TestClient
     {
         private static void Main(string[] args)
         {
-            using (SocketClient client = new SocketClient("115.28.137.134", 8081))
+            using (SocketClient client = new SocketClient("127.0.0.1", 8081))
             {
                 client.Connect();
                 client.OnSocketReceive += client_OnSocketReceive;
@@ -31,7 +31,7 @@ namespace TestClient
             Console.ReadLine();
         }
 
-        static void client_OnSocketReceive(object sender, SocketReceiveEventArgs e)
+        private static void client_OnSocketReceive(object sender, SocketReceiveEventArgs e)
         {
             foreach (string content in e.Contents)
             {
