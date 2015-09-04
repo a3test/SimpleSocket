@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace SimpleSocket
 {
@@ -53,7 +51,29 @@ namespace SimpleSocket
         {
             IPEndPoint remoteEP = new IPEndPoint(IpAddress, Port);
             _sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            SetKeepAlive();
             _sender.Connect(remoteEP);
+        }
+
+        /// <summary>
+        /// 设置KeepAlive
+        /// </summary>
+        private void SetKeepAlive()
+        {
+            if (_sender != null)
+            {
+                // Socket空闲多久后开始发送KeepAlive包(单位:毫秒)
+                uint KeepAliveTime = 5000;
+                //KeepAlive包发送间隔时间(单位:毫秒)
+                uint KeepAliveInterval = 5000;
+
+                uint dummy = 0;
+                byte[] optionInValue = new byte[Marshal.SizeOf(dummy)*3];
+                BitConverter.GetBytes((uint) 1).CopyTo(optionInValue, 0);
+                BitConverter.GetBytes(KeepAliveTime).CopyTo(optionInValue, Marshal.SizeOf(dummy));
+                BitConverter.GetBytes(KeepAliveInterval).CopyTo(optionInValue, Marshal.SizeOf(dummy)*2);
+                _sender.IOControl(IOControlCode.KeepAliveValues, optionInValue, null);
+            }
         }
 
         /// <summary>
@@ -76,8 +96,8 @@ namespace SimpleSocket
                 state);
             if (se != SocketError.Success)
             {
-                _sender.Close();
-                _sender.Dispose();
+                //TODO:: Do something
+                Console.WriteLine("Test message: SocketClient Receive()");
             }
         }
 
@@ -108,6 +128,7 @@ namespace SimpleSocket
                 //Release unmanaged resources
                 if (_sender != null)
                 {
+                    _sender.Shutdown(SocketShutdown.Both);
                     _sender.Close();
                     _sender.Dispose();
                 }

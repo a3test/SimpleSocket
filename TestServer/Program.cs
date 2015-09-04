@@ -7,7 +7,7 @@ namespace TestServer
     {
         private static void Main(string[] args)
         {
-            using (SocketServer server = new SocketServer(9231))
+            using (SocketServer server = new SocketServer(8081))
             {
                 server.TestListening();
                 server.OnSocketReceive += server_OnSocketReceive;

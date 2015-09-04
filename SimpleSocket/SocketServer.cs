@@ -116,7 +116,8 @@ namespace SimpleSocket
                 state);
             if (se != SocketError.Success)
             {
-                handler.Dispose();
+                //TODO:: Do something
+                Console.WriteLine("Test message: AcceptCallback()");
             }
         }
 

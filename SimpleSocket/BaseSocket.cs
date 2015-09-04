@@ -36,7 +36,8 @@ namespace SimpleSocket
             int recLen = handler.EndReceive(ar, out se);
             if (se != SocketError.Success)
             {
-                handler.Dispose();
+                //TODO:: Do somethine
+                Console.WriteLine("Test message: ReceiveCallback() 1");
                 return;
             }
 
@@ -55,7 +56,8 @@ namespace SimpleSocket
                 state);
             if (se != SocketError.Success)
             {
-                handler.Dispose();
+                //TODO:: Do something
+                Console.WriteLine("Test message: ReceiveCallback() 2");
             }
         }
 

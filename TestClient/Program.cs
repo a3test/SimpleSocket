@@ -10,7 +10,7 @@ namespace TestClient
     {
         private static void Main(string[] args)
         {
-            using (SocketClient client = new SocketClient("127.0.0.1", 9231))
+            using (SocketClient client = new SocketClient("115.28.137.134", 8081))
             {
                 client.Connect();
                 client.OnSocketReceive += client_OnSocketReceive;
@@ -18,6 +18,13 @@ namespace TestClient
                 client.Send("你好");
                 client.Send("12345");
                 client.Send("abcd");
+
+                Console.ReadLine();
+
+                client.Send("你好2");
+                client.Send("123452");
+                client.Send("abcd2");
+
                 Console.ReadLine();
             }
 
